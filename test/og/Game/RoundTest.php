@@ -78,7 +78,7 @@ class RoundTest extends BaseTestCase
 
         $this->assertCount(1, $killEvents);
         $killEvent = $killEvents[0];
-        $this->assertInstanceOf(KillEvent::class, $killEvent);
+        $this->assertInstanceOf(KillEvent::class, $killEvent); // @phpstan-ignore-line
         $this->assertSame([
             'playerDead' => $killEvent->getPlayerDead()->getId(),
             'playerCulprit' => $killEvent->getPlayerCulprit()->getId(),
@@ -92,8 +92,8 @@ class RoundTest extends BaseTestCase
         $this->assertCount(2, $dropEvents);
         $drop1 = $dropEvents[0];
         $drop2 = $dropEvents[1];
-        $this->assertInstanceOf(SoundEvent::class, $drop1);
-        $this->assertInstanceOf(SoundEvent::class, $drop2);
+        $this->assertInstanceOf(SoundEvent::class, $drop1); // @phpstan-ignore-line
+        $this->assertInstanceOf(SoundEvent::class, $drop2); // @phpstan-ignore-line
         $this->assertInstanceOf(PistolGlock::class, $drop1->getItem());
         $this->assertInstanceOf(Bomb::class, $drop2->getItem());
         $pp = $game->getPlayer(1)->getPositionClone();

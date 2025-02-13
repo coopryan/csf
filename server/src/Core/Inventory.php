@@ -15,7 +15,7 @@ use cs\Weapon\PistolUsp;
 class Inventory
 {
 
-    /** @var Item[] [slotId => Item] */
+    /** @var array<int,Item> [slotId => Item] */
     private array $items = [];
     private int $dollars = 0;
     private int $equippedSlot;

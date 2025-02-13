@@ -61,7 +61,6 @@ class PlayerKillTest extends BaseTestCase
         $this->assertGreaterThan(0, $wall->getHitAntiForce(new Point()));
 
         $playerOne = $headHit->getPlayer();
-        $this->assertInstanceOf(Player::class, $playerOne);
         $this->assertFalse($playerOne->isAlive());
         $this->assertNull($player2->attack());
         $this->assertTrue($headHit->getType() === HitBoxType::HEAD);
@@ -101,7 +100,6 @@ class PlayerKillTest extends BaseTestCase
         $this->assertInstanceOf(Wall::class, $hits[2]);
 
         $playerOne = $headHit->getPlayer();
-        $this->assertInstanceOf(Player::class, $playerOne);
         $this->assertFalse($playerOne->isAlive());
         $this->assertNull($player2->attack());
         $this->assertTrue($headHit->getType() === HitBoxType::HEAD);

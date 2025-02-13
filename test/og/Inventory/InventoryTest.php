@@ -47,7 +47,7 @@ class InventoryTest extends BaseTestCase
         $this->assertInstanceOf(Knife::class, $game->getPlayer(1)->getEquippedItem());
         $game->getPlayer(1)->equip(InventorySlot::SLOT_KIT);
         $game->getPlayer(1)->equip(InventorySlot::SLOT_TASER);
-        $this->assertInstanceOf(Knife::class, $game->getPlayer(1)->getEquippedItem());
+        $this->assertInstanceOf(Knife::class, $game->getPlayer(1)->getEquippedItem()); // @phpstan-ignore-line
     }
 
     public function testPlayerInventorySlots(): void
