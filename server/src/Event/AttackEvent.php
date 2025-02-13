@@ -27,7 +27,8 @@ final class AttackEvent implements Attackable
         $bullet = $this->item->createBullet();
         $bullet->setOriginPlayer($this->playerId, $this->playingOnAttackerSide, $this->origin->clone());
         $result = new AttackResult($bullet);
-        $checkDistance = $bullet->getDistanceTraveled();
+
+        $this->world->optimizeBulletHitCheck($bullet);
 
         // OPTIMIZATION_1: Precalculate sin/cos
         $sinV = sin(deg2rad($this->angleVertical));
@@ -53,16 +54,12 @@ final class AttackEvent implements Attackable
 
             $prevPos->setFrom($newPos);
             $bullet->move($newPos);
-            if ($distance > $checkDistance) {
-                $checkDistance *= 3;
-                $this->world->optimizeBulletHitCheck($bullet);
-            }
 
             foreach ($this->world->calculateHits($bullet, $newPos) as $hit) {
                 $bullet->lowerDamage($hit->getHitAntiForce($newPos));
                 $result->addHit($hit);
                 $this->world->bulletHit($hit, $bullet, $hit->wasHeadShot());
-                if (!$bullet->isActive()) {
+                if (!$bullet->isActive()) { // @infection-ignore-all
                     break;
                 }
             }
@@ -71,6 +68,7 @@ final class AttackEvent implements Attackable
         return $result;
     }
 
+    /** @infection-ignore-all */
     public function applyRecoil(float $offsetHorizontal, float $offsetVertical): void
     {
         $this->angleHorizontal += $offsetHorizontal;

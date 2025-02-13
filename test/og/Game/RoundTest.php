@@ -10,6 +10,7 @@ use cs\Core\Util;
 use cs\Core\Wall;
 use cs\Enum\BuyMenuItem;
 use cs\Enum\Color;
+use cs\Enum\GameOverReason;
 use cs\Enum\InventorySlot;
 use cs\Enum\SoundType;
 use cs\Equipment\Bomb;
@@ -22,6 +23,7 @@ use cs\Event\RoundEndCoolDownEvent;
 use cs\Event\RoundEndEvent;
 use cs\Event\RoundStartEvent;
 use cs\Event\SoundEvent;
+use cs\Map\DefaultMap;
 use cs\Weapon\PistolGlock;
 use cs\Weapon\RifleAk;
 use Test\BaseTestCase;
@@ -164,6 +166,57 @@ class RoundTest extends BaseTestCase
         $this->assertFalse($game->isPaused());
     }
 
+    protected function _testRoundRandomizeSpawnPosition(bool $randomize): void
+    {
+        $spawns = [];
+        $sights = [];
+
+        $game = $this->createGame([
+            GameProperty::MAX_ROUNDS => 33,
+            GameProperty::RANDOMIZE_SPAWN_POSITION => $randomize,
+        ]);
+        $p = new Player(2, Color::BLUE, false);
+        $game->addPlayer($p);
+
+        $game->onEvents(function (array $events) use ($p, $game, &$spawns, &$sights): void {
+            foreach ($events as $event) {
+                if ($p->isPlayingOnAttackerSide()) {
+                    $game->quit(GameOverReason::ATTACKERS_SURRENDER);
+                    return;
+                }
+
+                if ($event instanceof RoundStartEvent) {
+                    $spawns[] = $p->getPositionClone()->hash();
+                    $sights[] = $p->getSight()->getRotationHorizontal();
+                    $p->getSight()->lookHorizontal(123);
+                }
+            }
+        });
+        $game->start();
+
+        $this->assertSame(17, $game->getRoundNumber());
+        $this->assertNotEmpty($spawns);
+        $this->assertNotEmpty($sights);
+
+        if ($randomize) {
+            $this->assertGreaterThan(3, count(array_unique($spawns)));
+            $this->assertGreaterThan(3, count(array_unique($sights)));
+        } else {
+            $this->assertCount(1, array_unique($spawns));
+            $this->assertCount(1, array_unique($sights));
+        }
+    }
+
+    public function testRoundRandomizeSpawnPositionTrue(): void
+    {
+        $this->_testRoundRandomizeSpawnPosition(true);
+    }
+
+    public function testRoundRandomizeSpawnPositionFalse(): void
+    {
+        $this->_testRoundRandomizeSpawnPosition(false);
+    }
+
     public function testRoundEndEventFiredOncePerRoundEndActually(): void
     {
         $maxRounds = 5;
@@ -226,6 +279,42 @@ class RoundTest extends BaseTestCase
         $this->assertSame([2, 0], $game->getScore()->toArray()['firstHalfScore']);
         $this->assertSame([3, 0], $game->getScore()->toArray()['secondHalfScore']);
         $this->assertSame(2, $game->getScore()->toArray()['halfTimeRoundNumber']);
+    }
+
+    public function testOnlyOneAttackerHasBombInInventory(): void
+    {
+        $gameProperty = $this->createNoPauseGameProperty();
+        $gameProperty->max_rounds = 6;
+
+        $game = $this->createTestGame(null ,$gameProperty);
+        $game->loadMap(new DefaultMap());
+        $game->addPlayer(new Player(2, Color::BLUE, true));
+        $game->addPlayer(new Player(3, Color::BLUE, true));
+
+        $bombCount = 0;
+        foreach ($game->getPlayers() as $player) {
+            $bombCount += (int)$player->getInventory()->has(InventorySlot::SLOT_BOMB->value);
+        }
+        $this->assertSame(1, $bombCount);
+
+        $game->onEvents(function (array $events) use ($game): void {
+            if (!$game->getPlayer(1)->isPlayingOnAttackerSide()) {
+                $game->quit(GameOverReason::ATTACKERS_SURRENDER);
+                return;
+            }
+
+            foreach ($events as $event) {
+                if ($event instanceof PauseEndEvent) {
+                    $bombCount = 0;
+                    foreach ($game->getPlayers() as $player) {
+                        $bombCount += (int)$player->getInventory()->has(InventorySlot::SLOT_BOMB->value);
+                    }
+                    $this->assertSame(1, $bombCount);
+                }
+            }
+        });
+        $game->start();
+        $this->assertSame(4, $game->getRoundNumber());
     }
 
     public function testRoundEndCoolDown(): void

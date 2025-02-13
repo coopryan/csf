@@ -28,7 +28,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y \
             composer
-          sudo sh -c 'echo "zend.assertions = 1" >> /etc/php/8.1/cli/php.ini'
+          sudo bash -c "echo 'zend.assertions = 1' >> /etc/php/*/cli/php.ini"
 
       - name: "Install Composer dependencies"
         timeout-minutes: 1
@@ -48,7 +48,7 @@ jobs:
           composer unit -- --stderr --no-progress --colors=never \
                 --coverage-xml=www/coverage/coverage-xml --log-junit=www/coverage/junit.xml \
                 --coverage-text --only-summary-for-coverage-text 2> cc.txt
-          grep 'Lines: 100%' cc.txt
+          grep 'Lines:' cc.txt | grep '100.00%'
 
       - name: "Check infection mutation framework min percentage"
         timeout-minutes: 5
@@ -56,4 +56,5 @@ jobs:
           export XDEBUG_MODE=off
           grep '"timeout": 20,' infection.json5
           sed -i 's/"timeout": 20,/"timeout": 40,/' infection.json5
-          composer infection-cache -- --threads=$(($(nproc) + 1)) --only-covering-test-cases --skip-initial-tests
+          composer infection-cache -- --threads=$(($(nproc) + 1)) \
+                --only-covering-test-cases --skip-initial-tests

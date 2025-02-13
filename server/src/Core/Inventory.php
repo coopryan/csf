@@ -88,11 +88,9 @@ class Inventory
 
     private function tryRemoveLastEquippedGrenade(Item $item): void
     {
-        if ($item instanceof Grenade) {
-            $index = array_search($item->getSlot()->value, $this->lastEquippedGrenadeSlots, true);
-            if (is_int($index)) {
-                unset($this->lastEquippedGrenadeSlots[$index]);
-            }
+        $index = array_search($item->getSlot()->value, $this->lastEquippedGrenadeSlots, true);
+        if (is_int($index)) {
+            unset($this->lastEquippedGrenadeSlots[$index]);
         }
     }
 

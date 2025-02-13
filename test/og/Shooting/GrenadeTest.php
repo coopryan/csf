@@ -362,7 +362,7 @@ class GrenadeTest extends BaseTestCase
         $floor = new Floor(new Point(500, 600, 500), 10, 10);
         $game->getWorld()->addFloor($floor);
 
-        $test = new class extends \stdClass {
+        $test = new class {
             public bool $goingUp = true;
             public bool $mid = false;
             public ?Point $lastPosition = null;

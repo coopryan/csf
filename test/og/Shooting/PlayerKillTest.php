@@ -390,6 +390,37 @@ class PlayerKillTest extends BaseTestCase
         ], $player2->getId());
     }
 
+    public function testHitTwoPlayersSharingSamePosition(): void
+    {
+        $p2 = new Player(2, Color::GREEN, false);
+        $p3 = new Player(3, Color::GREEN, false);
+
+        $game = $this->createTestGame();
+
+        $game->addPlayer($p2);
+        $game->addPlayer($p3);
+        $p2->setPosition(new Point(300, 0, 300));
+        $p3->setPosition($p2->getPositionClone());
+
+        $this->playPlayer($game, [
+            fn(Player $p) => $p->setPosition(new Point(500, 0, 300)),
+            fn(Player $p) => $p->getSight()->look(-90, 0),
+            fn(Player $p) => $p->equipSecondaryWeapon(),
+            $this->waitNTicks(PistolGlock::equipReadyTimeMs),
+            function (Player $p) {
+                $result = $p->attack();
+                $this->assertNotNull($result);
+
+                $hits = $result->getHits();
+                $this->assertCount(3, $hits);
+                $this->assertInstanceOf(HitBox::class, $hits[0]);
+                $this->assertInstanceOf(HitBox::class, $hits[1]);
+                $this->assertInstanceOf(Wall::class, $hits[2]);
+            },
+            $this->endGame(),
+        ]);
+    }
+
     public function testArmorShooting(): void
     {
         $game = $this->createTestGame();

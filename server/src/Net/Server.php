@@ -304,10 +304,12 @@ final class Server
     /**
      * @codeCoverageIgnore
      */
-    public function storeRequests(string $path = '/tmp/cs.server.req'): void
+    public function storeRequests(?string $path = null): void
     {
+        $path = $path ?? (sys_get_temp_dir() . '/cs.server.req');
+        $this->log(sprintf("Storing requests at '%s'", $path));
+        file_put_contents($path, '');
         $this->saveRequestsPath = $path;
-        file_put_contents($this->saveRequestsPath, '');
     }
 
 }

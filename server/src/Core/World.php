@@ -49,13 +49,10 @@ final class World
     private int $lastBombActionTick = -1;
     private int $lastBombPlayerId = -1;
     private int $bombActionTickBuffer = 1;
-    private int $playerPotentialDistanceSquared;
     private ?PathFinder $grenadeNavMesh = null;
 
     public function __construct(private Game $game)
     {
-        $this->playerPotentialDistanceSquared = ($game->getBacktrack()->numberOfHistoryStates + 2) * pow(Setting::moveDistancePerTick(), 2)
-            + pow(Setting::playerBoundingRadius(), 2); // fixme: more tests to know if it is reliable heuristic value, also test with further backtrack
     }
 
     public function roundReset(): void
@@ -405,32 +402,11 @@ final class World
 
     public function optimizeBulletHitCheck(Bullet $bullet): void
     {
-        $skipPlayerIds = $bullet->getPlayerSkipIds();
-        if (count($this->playersColliders) === count($skipPlayerIds)) {
-            return;
-        }
+        // todo calculate bounding box for alive players with min/max pos from backtrack states and do box with line collision check and skip if missed
 
-        $test = new Point();
-        $bo = $bullet->getOrigin();
-        $bp = $bullet->getPosition();
-        $headCrouch = Setting::playerHeadHeightCrouch();
         foreach ($this->game->getPlayers() as $playerId => $player) {
-            if ($skipPlayerIds[$playerId] ?? false) {
-                continue;
-            }
             if (!$player->isAlive()) {
                 $bullet->addPlayerIdSkip($playerId);
-                continue;
-            }
-
-            $test->setFrom($player->getReferenceToPosition());
-            $distanceSquared = Util::distanceSquared($test->addY($headCrouch), $bp);
-            if ($distanceSquared < $this->playerPotentialDistanceSquared) { // to close to reliably decide
-                continue;
-            }
-            if ($distanceSquared - $this->playerPotentialDistanceSquared > Util::distanceSquared($test, $bo)) {
-                $bullet->addPlayerIdSkip($playerId); // distance is bigger than bullet origin so hit should not be possible
-                continue;
             }
         }
     }
@@ -797,7 +773,7 @@ final class World
         }
     }
 
-    public function surfaceHit(Point $hitPoint, SolidSurface $hit, int $attackerId, Point $origin, Item $item, int $damage): void
+    private function surfaceHit(Point $hitPoint, SolidSurface $hit, int $attackerId, Point $origin, Item $item, int $damage): void
     {
         $soundEvent = new SoundEvent($hitPoint, SoundType::BULLET_HIT);
         $soundEvent->setItem($item);

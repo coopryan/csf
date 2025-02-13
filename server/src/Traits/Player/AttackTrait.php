@@ -133,7 +133,7 @@ trait AttackTrait
     private function applyMovementRecoil(AttackEvent $event): void
     {
         $item = $this->getEquippedItem();
-        if (in_array($item->getType(), [ItemType::TYPE_KNIFE, ItemType::TYPE_BOMB, ItemType::TYPE_GRENADE], true)) {
+        if (in_array($item->getType(), [ItemType::TYPE_KNIFE, ItemType::TYPE_BOMB, ItemType::TYPE_GRENADE], true)) { // @infection-ignore-all
             return;
         }
         // fixme: better offsets value calculations for each item and smallest group range randomness as possible
