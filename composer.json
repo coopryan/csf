@@ -38,7 +38,7 @@
         }
     },
     "require-dev": {
-        "infection/infection": "*",
+        "infection/infection": "0.29.6",
         "phpstan/phpstan-phpunit": "*",
         "phpunit/phpunit": "*"
     },

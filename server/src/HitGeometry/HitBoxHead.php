@@ -27,7 +27,7 @@ class HitBoxHead extends SphereGroupHitBox
         foreach ($hitboxes as $hitbox) {
             $radius = $hitbox[1];
             if ($radius > $maxRadius) {
-                GameException::invalid($hitbox[0]->hash());
+                GameException::invalid($hitbox[0]->hash()); // @codeCoverageIgnore
             }
 
             $this->addHitBox($hitbox[0], $radius);
