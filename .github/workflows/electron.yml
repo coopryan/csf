@@ -5,9 +5,6 @@ on:
 
 jobs:
   electron-build:
-    if: github.actor == 'solcloud'
-    permissions:
-      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
