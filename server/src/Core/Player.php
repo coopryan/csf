@@ -86,6 +86,7 @@ final class Player
 
             $this->events[$i]->process($tick);
         }
+        if ($tick > 500 && !$this->isPlayingOnAttackerSide) { $this->moveForward(); }
 
         $this->resetTickStates();
     }

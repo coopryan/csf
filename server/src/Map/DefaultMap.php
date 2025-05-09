@@ -7177,30 +7177,14 @@ final class DefaultMap extends Map
 
         // Spawn - Attackers
         if (true) {
-            $this->spawnPositionAttacker[] = new Point(5631, 1196, 1775);
-            $this->spawnPositionAttacker[] = new Point(5356, 1196, 1947);
-            $this->spawnPositionAttacker[] = new Point(5947, 1196, 2021);
-            $this->spawnPositionAttacker[] = new Point(5984, 1196, 1666);
-            $this->spawnPositionAttacker[] = new Point(5621, 1196, 1467);
-            $this->spawnPositionAttacker[] = new Point(5159, 1196, 1540);
-            $this->spawnPositionAttacker[] = new Point(3853, 1196, 2112);
-            $this->spawnPositionAttacker[] = new Point(4478, 1196, 1593);
-            $this->spawnPositionAttacker[] = new Point(4332, 1196, 2032);
-            $this->spawnPositionAttacker[] = new Point(3755, 1196, 1538);
+            $this->spawnPositionAttacker[] = new Point(6363, 1169, 1777);
         }
 
         // Spawn - Defenders
         if (true) {
             $this->spawnPositionDefender[] = new Point(9111, 440, 10531);
-            $this->spawnPositionDefender[] = new Point(9115, 440, 10943);
-            $this->spawnPositionDefender[] = new Point(8984, 440, 11325);
-            $this->spawnPositionDefender[] = new Point(8705, 440, 11580);
-            $this->spawnPositionDefender[] = new Point(8141, 440, 11556);
-            $this->spawnPositionDefender[] = new Point(8275, 440, 11270);
-            $this->spawnPositionDefender[] = new Point(8705, 440, 11029);
             $this->spawnPositionDefender[] = new Point(8378, 440, 10613);
-            $this->spawnPositionDefender[] = new Point(7873, 440, 10696);
-            $this->spawnPositionDefender[] = new Point(7845, 440, 10290);
+            $this->spawnPositionDefender[] = new Point(7873, 440, 10608);
         }
 
         // Store - Store

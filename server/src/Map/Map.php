@@ -74,7 +74,7 @@ abstract class Map
 
     public function getSpawnRotationDefender(): int
     {
-        return 0;
+        return -90;
     }
 
     public function getBombMaxBlastDistance(): int

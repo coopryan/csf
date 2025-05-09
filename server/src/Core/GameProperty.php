@@ -6,9 +6,9 @@ class GameProperty
 {
 
     const START_MONEY = 'start_money';
-    public int $start_money = 800;
+    public int $start_money = 6900;
     const RANDOMIZE_SPAWN_POSITION = 'randomize_spawn_position';
-    public bool $randomize_spawn_position = true;
+    public bool $randomize_spawn_position = false;
     const MAX_ROUNDS = 'max_rounds';
     public int $max_rounds = 24;
     const ROUND_TIME_MS = 'round_time_ms';
@@ -22,7 +22,7 @@ class GameProperty
     const HALF_TIME_FREEZE_SEC = 'half_time_freeze_sec';
     public int $half_time_freeze_sec = 15;
     const FREEZE_TIME_SEC = 'freeze_time_sec';
-    public int $freeze_time_sec = 10;
+    public int $freeze_time_sec = 1;
     const BUY_TIME_SEC = 'buy_time_sec';
     public int $buy_time_sec = 20;
     const ROUND_END_COOL_DOWN_SEC = 'round_end_cool_down_sec';
