@@ -196,6 +196,7 @@ final class PlaneBuilder
         $isFloor = ($points[1][1] === $points[0][1]);
         $stairsGoingUp = ($angleV > 0);
         $wallWidthOnXAxis = (Util::directionX($angleH) === 0);
+        $nh = Util::nearbyInt($angleH); $nv = Util::nearbyInt($angleV);
 
         $i = 0;
         $maxIteration = count($points);
@@ -218,13 +219,13 @@ final class PlaneBuilder
             $current = $points[$i - 1];
             if ($isFloor) {
                 if ($wallWidthOnXAxis) {
-                    $planes[] = new Floor($previous->clone(), $width, $current[2] - $previous->z);
+                    $planes[] = (new Floor($previous->clone(), $width, $current[2] - $previous->z))->setNormalAngle($nh, $nv);
                 } else {
-                    $planes[] = new Floor($previous->clone(), $current[0] - $previous->x, $width);
+                    $planes[] = (new Floor($previous->clone(), $current[0] - $previous->x, $width))->setNormalAngle($nh, $nv);
                 }
             } else {
                 $wallStart = ($stairsGoingUp ? $previous->clone() : new Point(...$current));
-                $planes[] = new Wall($wallStart, $wallWidthOnXAxis, $width, abs($current[1] - $previous->y));
+                $planes[] = (new Wall($wallStart, $wallWidthOnXAxis, $width, abs($current[1] - $previous->y)))->setNormalAngle($nh, $nv);
             }
 
             $previous->set($current[0], $current[1], $current[2]);

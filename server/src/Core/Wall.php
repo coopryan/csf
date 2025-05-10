@@ -58,4 +58,5 @@ class Wall extends Plane
         return new self($start, $widthOnXAxis, $width, $end->y - $start->y);
     }
 
+
 }

@@ -13,6 +13,7 @@ abstract class Plane extends SolidSurface
     protected int $wallBangEdgeMarginDistance = 8;
     protected Point2D $point2DStart;
     protected Point2D $point2DEnd;
+    protected ?array $angle = null;
 
     public function __construct(private Point $start, private Point $end, private string $axis2d)
     {
@@ -101,6 +102,25 @@ abstract class Plane extends SolidSurface
     public function getPlane(): string
     {
         return $this->axis2d;
+    }
+
+public function setNormalAngle(int $horizontal, int $vertical):self
+{
+    $this->angle = [$horizontal,$vertical];
+    return $this;
+}
+    public function getNormalHorizontal(): int
+    {
+if ($this->angle === null) {
+    return $this->axis2d === 'zy' ? 90 : 0;
+}
+return $this->angle[0];
+    } public function getNormalVertical(): int
+    {
+if ($this->angle === null) {
+    return $this->axis2d === 'xz' ? 90 : 0;
+}
+return $this->angle[1];
     }
 
 }

@@ -45,17 +45,18 @@ class BallCollider
         $isCollision = false;
         $this->candidate->set($point->x + $r * $moveX, $point->y + $r * $moveY, $point->z + $r * $moveZ);
 
-        if ($moveY !== 0 && $this->world->findFloorSquare($this->candidate, $r)) {
+        if ($moveY !== 0 && $plane = $this->world->findFloorSquare($this->candidate, $r)) {
             $this->angleVertical = Util::nearbyInt(Util::worldAngle($point, $this->lastExtremePosition)[1]);
             $this->angleVertical = $moveY > 0 ? -abs($this->angleVertical) : abs($this->angleVertical);
             $this->yGrowing = $this->angleVertical > 0;
             $isCollision = true;
         }
 
-        if ($moveX !== 0 && $this->world->checkXSideWallCollision($this->candidate, 2 * $r, $r)) {
+        if ($moveX !== 0 && $plane = $this->world->checkXSideWallCollision($this->candidate, 2 * $r, $r)) {
             $this->angleHorizontal = Util::normalizeAngle(360 - $this->angleHorizontal);
             $isCollision = true;
-        } elseif ($moveZ !== 0 && $this->world->checkZSideWallCollision($this->candidate, 2 * $r, $r)) {
+            $nH = $plane->getNormalHorizontal();
+        } elseif ($moveZ !== 0 && $plane = $this->world->checkZSideWallCollision($this->candidate, 2 * $r, $r)) {
             $this->angleHorizontal = Util::normalizeAngle(360 - $this->angleHorizontal + 180);
             $isCollision = true;
         }

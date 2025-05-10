@@ -6,6 +6,7 @@ use cs\Core\Box;
 use cs\Core\Floor;
 use cs\Core\GameFactory;
 use cs\Core\Plane;
+use cs\Core\PlaneBuilder;
 use cs\Core\Point;
 use cs\Core\Util;
 use cs\Core\Wall;
@@ -16,6 +17,35 @@ use Test\BaseTest;
 
 class BallColliderTest extends BaseTest
 {
+
+    public function testSlope(): void
+    {
+        /////
+        $angleHorizontal = 90.0;
+        $angleVertical = 0.0;
+        $start = new Point(2, 10, 10);
+        $resolutionPoint = new Point(7, 10, 10);
+        $resolutionAngleHorizontal = 0;
+        $resolutionAngleVertical = 90.0;
+        /////
+
+        $world = $this->createWorld();
+        $ball = $this->createBall($start, 2, $world, $angleHorizontal, $angleVertical);
+        $planeBuilder = new PlaneBuilder();
+        $planes = $planeBuilder->fromQuad(new Point(), new Point(0,0, 300), new Point(500, 500, 0), new Point(500, 500, 300));
+        foreach ($planes as $plane) {
+            if ($plane instanceof Wall) {
+                $world->addWall($plane);
+            } elseif ($plane instanceof Floor) {
+                $world->addFloor($plane);
+            }
+        }
+
+        $this->runCollision($ball, $start, $angleHorizontal, $angleVertical);
+        $this->assertPositionSame($resolutionPoint, $ball->getLastValidPosition());
+        $this->assertSame($resolutionAngleHorizontal, $ball->getResolutionAngleHorizontal());
+        $this->assertSame($resolutionAngleVertical, $ball->getResolutionAngleVertical());
+    }
 
     public function testResolution1(): void
     {
