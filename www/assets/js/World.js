@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import * as Enum from "./Enums.js"
 import {RGBELoader} from "three/addons/loaders/RGBELoader.js"
+import { KTX2Loader } from 'three/addons/loaders/KTX2Loader.js';
 import {ModelRepository} from "./ModelRepository.js"
 import {Utils} from "./Utils.js";
 
@@ -25,29 +26,9 @@ export class World {
     }
 
     init(mapName, setting) {
-        const scene = new THREE.Scene()
-        scene.name = 'MainScene'
-        scene.background = new THREE.Color(0xdadada)
-
-        const promises = []
-        promises.push(this.#modelRepository.loadAll())
-        promises.push(this.#modelRepository.loadMap(mapName).then((model) => scene.add(model)))
-
-        const camera = new THREE.PerspectiveCamera(setting.getFieldOfView(), window.innerWidth / window.innerHeight, 1, 19999)
-        camera.rotation.reorder("YXZ")
-        const listener = new THREE.AudioListener()
-        const povItem = new THREE.Group()
-        povItem.name = 'pov-item'
-        povItem.scale.setScalar(.7)
-        povItem.scale.x *= (setting.hasWeaponInRightHand() ? 1 : -1)
-        povItem.position.x = (setting.hasWeaponInRightHand() ? 8 : -8)
-        povItem.position.z = -12
-        povItem.position.y = -14
-        camera.add(listener, povItem)
-        this.#soundListener = listener
-
-        const glParameters = {
+ const glParameters = {
             powerPreference: 'high-performance',
+//            logarithmicDepthBuffer: true,
         }
         if (!setting.shouldPreferPerformance()) {
             glParameters.antialias = true
@@ -72,11 +53,42 @@ export class World {
             renderer.setPixelRatio(window.devicePixelRatio)
         }
 
+        
+        var ktx2Loader = new KTX2Loader();
+ktx2Loader.setTranscoderPath( 'assets/threejs/libs/basis/' );
+ktx2Loader.detectSupport( renderer );
+window.ktx = ktx2Loader
+
+
+        const scene = new THREE.Scene()
+        scene.name = 'MainScene'
+        scene.background = new THREE.Color(0xdadada)
+
+        const promises = []
+        promises.push(this.#modelRepository.loadAll(ktx2Loader))
+        promises.push(this.#modelRepository.loadMap(mapName).then((model) => scene.add(model)))
+
+        const camera = new THREE.PerspectiveCamera(setting.getFieldOfView(), window.innerWidth / window.innerHeight, 1, 19999)
+        camera.rotation.reorder("YXZ")
+        const listener = new THREE.AudioListener()
+        const povItem = new THREE.Group()
+        povItem.name = 'pov-item'
+        povItem.scale.setScalar(.7)
+        povItem.scale.x *= (setting.hasWeaponInRightHand() ? 1 : -1)
+        povItem.position.x = (setting.hasWeaponInRightHand() ? 8 : -8)
+        povItem.position.z = -12
+        povItem.position.y = -14
+        camera.add(listener, povItem)
+        this.#soundListener = listener
+
+       
+
         window.addEventListener('resize', function () {
             camera.aspect = window.innerWidth / window.innerHeight
             camera.updateProjectionMatrix()
             renderer.setSize(window.innerWidth, window.innerHeight)
         })
+
 
         this.#scene = scene
         this.#camera = camera

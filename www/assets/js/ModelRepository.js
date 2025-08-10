@@ -114,7 +114,8 @@ export class ModelRepository {
         return model.clone()
     }
 
-    loadAll() {
+    loadAll(ktx) {
+      this.#gltfLoader.setKTX2Loader(ktx)
         const self = this
         const promises = []
 
