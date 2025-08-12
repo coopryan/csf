@@ -34,11 +34,17 @@ export class ModelRepository {
 
     loadMap(mapName) {
         return this.#loadModel(`./resources/map/${mapName}.glb`).then((model) => {
+            model.scene.matrixAutoUpdate = false
+            model.scene.matrixWorldAutoUpdate = false
             model.scene.traverse(function (object) {
                 if (object.isMesh) {
+                    if (object.material) {
+                        object.material.shadowSide = THREE.DoubleSide
+                    }
                     object.castShadow = true
                     object.receiveShadow = true
                     object.matrixAutoUpdate = false
+                    object.matrixWorldAutoUpdate = false
                     object.layers.enable(Utils.LAYER_WORLD)
                 }
             })
