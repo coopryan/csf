@@ -227,6 +227,18 @@ class InventoryTest extends BaseTestCase
             fn(Player $p) => $p->getSight()->lookHorizontal(45),
             fn(Player $p) => $p->use(),
             fn(Player $p) => $this->assertTrue($p->getInventory()->has(InventorySlot::SLOT_SECONDARY->value)),
+            // non primary nor secondary item already had in inventory pickup
+            fn(Player $p) => $p->getSight()->lookVertical(-90),
+            fn(Player $p) => $this->assertTrue($p->buyItem(BuyMenuItem::GRENADE_FLASH)),
+            fn(Player $p) => $this->assertTrue($p->buyItem(BuyMenuItem::GRENADE_FLASH)),
+            fn(Player $p) => $this->assertSame(2, $p->getEquippedItem()->getQuantity()),
+            fn(Player $p) => $this->assertNotNull($p->dropEquippedItem()),
+            fn(Player $p) => $this->assertSame(1, $p->getEquippedItem()->getQuantity()),
+            fn(Player $p) => $this->assertTrue($p->getInventory()->has(InventorySlot::SLOT_GRENADE_FLASH->value)),
+            $this->waitNTicks(200),
+            fn(Player $p) => $this->assertSame(1, $p->getEquippedItem()->getQuantity()),
+            fn(Player $p) => $p->use(),
+            fn(Player $p) => $this->assertSame(2, $p->getEquippedItem()->getQuantity()),
             $this->endGame(),
         ]);
     }

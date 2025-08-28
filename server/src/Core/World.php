@@ -296,7 +296,7 @@ final class World
             $bomb = $this->bomb;
             $tickId = $this->getTickId();
             $playerId = $player->getId();
-            if ($playerId !== $this->lastBombPlayerId || $this->lastBombActionTick + $this->bombActionTickBuffer < $tickId) {
+            if ($playerId !== $this->lastBombPlayerId && $this->lastBombActionTick + $this->bombActionTickBuffer < $tickId) {
                 $player->stop();
                 $bomb->startDefusing($tickId, $player->hasDefuseKit());
                 $soundEvent = new SoundEvent($player->getPositionClone()->addY(10), SoundType::BOMB_DEFUSING);
